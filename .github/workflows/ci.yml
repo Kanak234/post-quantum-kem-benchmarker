@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    name: Build & Test (${{ matrix.compiler }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+        include:
+          - compiler: gcc
+            cxx: g++
+          - compiler: clang
+            cxx: clang++
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake clang
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${{ matrix.cxx }}
+
+      - name: Build Library & Binaries
+        run: |
+          cmake --build build --parallel $(nproc)
+
+      - name: Run Verification Test Suite
+        run: |
+          ctest --test-dir build --output-on-failure
+
+      - name: Run Microbenchmarks
+        run: |
+          ./build/benchmark_kem
+
+  docker-build:
+    name: Docker Container Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          docker build -t post-quantum-kem-benchmarker:ci .
+
+      - name: Test Docker Container Run
+        run: |
+          docker run --rm post-quantum-kem-benchmarker:ci demo 768

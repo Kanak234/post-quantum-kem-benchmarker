@@ -1,0 +1,14 @@
+build*/
+bin/
+*.o
+*.a
+*.so
+*.dylib
+*.gcda
+*.gcno
+*.gcov
+compile_commands.json
+.vscode/
+.idea/
+*.swp
+.DS_Store
