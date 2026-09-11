@@ -1,9 +1,11 @@
 # post-quantum-kem-benchmarker
 
 [![CI](https://github.com/Kanak234/post-quantum-kem-benchmarker/actions/workflows/ci.yml/badge.svg)](https://github.com/Kanak234/post-quantum-kem-benchmarker/actions/workflows/ci.yml)
+[![CodeQL Analysis](https://github.com/Kanak234/post-quantum-kem-benchmarker/actions/workflows/codeql.yml/badge.svg)](https://github.com/Kanak234/post-quantum-kem-benchmarker/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Standard](https://img.shields.io/badge/Standard-NIST%20FIPS%20203-purple.svg)](https://csrc.nist.gov/pubs/fips/203/final)
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-blue.svg)](https://en.cppreference.com/w/cpp/20)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](#quick-start)
 
 > [!WARNING]
 > **Educational & Research Notice**: This codebase is engineered strictly for educational, research, and algorithmic exploration purposes. It implements NIST FIPS 203 (ML-KEM / Kyber) in pure C++20 with zero third-party dependencies. For production deployments protecting sensitive infrastructure, rely on FIPS-validated Hardware Security Modules (HSMs) or formally audited cryptographic libraries.

@@ -10,8 +10,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+option(ENABLE_COVERAGE "Enable code coverage instrumentation" OFF)
+
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_compile_options(-Wall -Wextra -Werror -pedantic -Wconversion -Wsign-conversion -O3)
+endif()
+
+if(ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    add_compile_options(--coverage -O0 -g)
+    add_link_options(--coverage)
 endif()
 
 # Core Cryptographic Library
@@ -46,6 +53,7 @@ set(TEST_SOURCES
     test_reduce_ntt
     test_poly
     test_mlkem_roundtrip
+    test_polyvec_edge_cases
 )
 
 foreach(TEST_NAME ${TEST_SOURCES})

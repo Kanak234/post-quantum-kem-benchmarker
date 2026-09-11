@@ -7,26 +7,25 @@ namespace kem {
 
 constexpr size_t KYBER_N = 256;
 constexpr int16_t KYBER_Q = 3329;
-constexpr size_t KYBER_SYMBYTES =
-    32; // Size of hashes, seeds, and shared secret
+constexpr size_t KYBER_SYMBYTES = 32;  // Size of hashes, seeds, and shared secret
 
 // Montgomery and Barrett reduction constants
-constexpr int16_t MONTGOMERY_R = 2285; // 2^16 mod q
-constexpr int16_t QINV = -3327;        // -q^-1 mod 2^16
+constexpr int16_t MONTGOMERY_R = 2285;  // 2^16 mod q
+constexpr int16_t QINV = -3327;         // -q^-1 mod 2^16
 
 struct KemParams {
-  size_t k;                  // Matrix dimension
-  size_t eta1;               // Noise parameter 1
-  size_t eta2;               // Noise parameter 2
-  size_t du;                 // Vector compression parameter
-  size_t dv;                 // Scalar compression parameter
-  size_t poly_bytes;         // 384
-  size_t polyvec_bytes;      // 384 * k
-  size_t polyvec_compressed; // 32 * du * k
-  size_t poly_compressed;    // 32 * dv
-  size_t public_key_bytes;   // polyvec_bytes + 32
-  size_t secret_key_bytes;   // polyvec_bytes + public_key_bytes + 32 + 32
-  size_t ciphertext_bytes;   // polyvec_compressed + poly_compressed
+  size_t k;                   // Matrix dimension
+  size_t eta1;                // Noise parameter 1
+  size_t eta2;                // Noise parameter 2
+  size_t du;                  // Vector compression parameter
+  size_t dv;                  // Scalar compression parameter
+  size_t poly_bytes;          // 384
+  size_t polyvec_bytes;       // 384 * k
+  size_t polyvec_compressed;  // 32 * du * k
+  size_t poly_compressed;     // 32 * dv
+  size_t public_key_bytes;    // polyvec_bytes + 32
+  size_t secret_key_bytes;    // polyvec_bytes + public_key_bytes + 32 + 32
+  size_t ciphertext_bytes;    // polyvec_compressed + poly_compressed
 };
 
 constexpr KemParams PARAMS_512 = {.k = 2,
@@ -68,4 +67,4 @@ constexpr KemParams PARAMS_1024 = {.k = 4,
                                    .secret_key_bytes = 3168,
                                    .ciphertext_bytes = 1568};
 
-} // namespace kem
+}  // namespace kem
