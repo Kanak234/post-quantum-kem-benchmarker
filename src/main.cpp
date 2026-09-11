@@ -154,13 +154,13 @@ void run_quick_bench(std::string_view name, size_t iters = 1000) {
   double decaps_us =
       std::chrono::duration<double, std::micro>(t3 - t2).count() / static_cast<double>(iters);
 
-  std::cout << "  * " << name << " (" << iters << " iters): "
-            << "KeyGen: " << std::fixed << std::setprecision(1) << keygen_us << " us ("
-            << static_cast<size_t>(1e6 / keygen_us) << " ops/s) | "
-            << "Encaps: " << encaps_us << " us (" << static_cast<size_t>(1e6 / encaps_us)
-            << " ops/s) | "
-            << "Decaps: " << decaps_us << " us (" << static_cast<size_t>(1e6 / decaps_us)
-            << " ops/s)\n";
+  std::cout << "  * " << name << " (" << iters << " iters): ";
+  std::cout << "KeyGen: " << std::fixed << std::setprecision(1) << keygen_us << " us (";
+  std::cout << static_cast<size_t>(1e6 / keygen_us) << " ops/s) | ";
+  std::cout << "Encaps: " << encaps_us << " us (";
+  std::cout << static_cast<size_t>(1e6 / encaps_us) << " ops/s) | ";
+  std::cout << "Decaps: " << decaps_us << " us (";
+  std::cout << static_cast<size_t>(1e6 / decaps_us) << " ops/s)\n";
 }
 
 int cmdHealth() {

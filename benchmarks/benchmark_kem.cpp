@@ -28,18 +28,22 @@ void print_header() {
                "HARNESS                     \n";
   std::cout << "==============================================================="
                "==========================\n";
-  std::cout << std::left << std::setw(30) << "Benchmark Operation" << std::right << std::setw(14)
-            << "Iterations" << std::setw(16) << "Total (ms)" << std::setw(16) << "Ops / Sec"
-            << std::setw(14) << "Avg (us)"
-            << "\n";
+  std::cout << std::left << std::setw(30) << "Benchmark Operation";
+  std::cout << std::right << std::setw(14) << "Iterations";
+  std::cout << std::setw(16) << "Total (ms)";
+  std::cout << std::setw(16) << "Ops / Sec";
+  std::cout << std::setw(14) << "Avg (us)\n";
   std::cout << "---------------------------------------------------------------"
                "--------------------------\n";
 }
 
 void print_row(const BenchmarkResult& res) {
-  std::cout << std::left << std::setw(30) << res.operation << std::right << std::setw(14)
-            << res.iterations << std::fixed << std::setprecision(2) << std::setw(16) << res.total_ms
-            << std::setw(16) << res.ops_per_sec << std::setw(14) << res.avg_us << "\n";
+  std::cout << std::left << std::setw(30) << res.operation;
+  std::cout << std::right << std::setw(14) << res.iterations;
+  std::cout << std::fixed << std::setprecision(2);
+  std::cout << std::setw(16) << res.total_ms;
+  std::cout << std::setw(16) << res.ops_per_sec;
+  std::cout << std::setw(14) << res.avg_us << "\n";
 }
 
 template <typename Func>
