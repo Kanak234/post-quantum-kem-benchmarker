@@ -1,11 +1,11 @@
-#include "kem/ml_kem.hpp"
 #include <cassert>
 #include <iostream>
 
+#include "kem/ml_kem.hpp"
+
 template <typename KemType>
-void test_kem_variant(const std::string &name, size_t iterations) {
-  std::cout << "  - Testing " << name << " (" << iterations << " iterations)..."
-            << std::endl;
+void test_kem_variant(const std::string& name, size_t iterations) {
+  std::cout << "  - Testing " << name << " (" << iterations << " iterations)..." << std::endl;
 
   for (size_t iter = 0; iter < iterations; ++iter) {
     alignas(64) std::array<uint8_t, KemType::PublicKeyBytes> pk{};
@@ -28,7 +28,7 @@ void test_kem_variant(const std::string &name, size_t iterations) {
 
     // 5. Chosen Ciphertext Attack / Tamper Rejection Test
     std::array<uint8_t, KemType::CiphertextBytes> tampered_ct = ct;
-    tampered_ct[iter % KemType::CiphertextBytes] ^= 0x5A; // Flip bits
+    tampered_ct[iter % KemType::CiphertextBytes] ^= 0x5A;  // Flip bits
 
     std::array<uint8_t, KemType::SharedSecretBytes> ss_tampered{};
     KemType::decaps(ss_tampered, tampered_ct, sk);
@@ -37,14 +37,11 @@ void test_kem_variant(const std::string &name, size_t iterations) {
     assert(ss_tampered != ss_enc);
   }
 
-  std::cout << "    * " << name << " Roundtrip & Implicit Rejection: PASSED"
-            << std::endl;
+  std::cout << "    * " << name << " Roundtrip & Implicit Rejection: PASSED" << std::endl;
 }
 
 int main() {
-  std::cout
-      << "[TEST] Running NIST FIPS 203 ML-KEM Complete Verification Suite..."
-      << std::endl;
+  std::cout << "[TEST] Running NIST FIPS 203 ML-KEM Complete Verification Suite..." << std::endl;
 
   test_kem_variant<kem::MlKem512>("ML-KEM-512 (NIST Category 1)", 10);
   test_kem_variant<kem::MlKem768>("ML-KEM-768 (NIST Category 3)", 10);
@@ -52,8 +49,7 @@ int main() {
 
   // Test deterministic KAT repeatability
   {
-    std::cout << "  - Testing Deterministic Seed Invariance (KAT)..."
-              << std::endl;
+    std::cout << "  - Testing Deterministic Seed Invariance (KAT)..." << std::endl;
     std::array<uint8_t, 32> d{};
     std::array<uint8_t, 32> z{};
     std::array<uint8_t, 32> m{};
@@ -82,7 +78,6 @@ int main() {
     std::cout << "    * Deterministic KAT Invariance: PASSED" << std::endl;
   }
 
-  std::cout << "[TEST] All ML-KEM verification tests passed successfully!"
-            << std::endl;
+  std::cout << "[TEST] All ML-KEM verification tests passed successfully!" << std::endl;
   return 0;
 }

@@ -1,13 +1,13 @@
-#include "kem/poly.hpp"
-#include "kem/reduce.hpp"
 #include <cassert>
 #include <cmath>
 #include <iostream>
 #include <random>
 
+#include "kem/poly.hpp"
+#include "kem/reduce.hpp"
+
 int main() {
-  std::cout << "[TEST] Running Polynomial Serialization & Compression Tests..."
-            << std::endl;
+  std::cout << "[TEST] Running Polynomial Serialization & Compression Tests..." << std::endl;
 
   // Test 1: 12-bit ByteEncode / ByteDecode (384 bytes) roundtrip
   {
@@ -30,8 +30,7 @@ int main() {
         assert(p.coeffs[i] == recovered.coeffs[i]);
       }
     }
-    std::cout << "  - ByteEncode12 / ByteDecode12 (384 bytes): PASSED"
-              << std::endl;
+    std::cout << "  - ByteEncode12 / ByteDecode12 (384 bytes): PASSED" << std::endl;
   }
 
   // Test 2: Message Encode / Decode (32 bytes) roundtrip
@@ -53,8 +52,7 @@ int main() {
 
       assert(msg == recovered_msg);
     }
-    std::cout << "  - Message ByteEncode1 / ByteDecode1 (32 bytes): PASSED"
-              << std::endl;
+    std::cout << "  - Message ByteEncode1 / ByteDecode1 (32 bytes): PASSED" << std::endl;
   }
 
   // Test 3: Polynomial Compression and Decompression bounds
@@ -77,13 +75,12 @@ int main() {
 
         // Check maximum rounding error bound: |x - round(x)| <= ceil(q /
         // 2^(d+1))
-        int max_allowed_err =
-            static_cast<int>(std::ceil(static_cast<double>(kem::KYBER_Q) /
-                                       static_cast<double>(1ULL << (d + 1)))) +
-            1;
+        int max_allowed_err = static_cast<int>(std::ceil(static_cast<double>(kem::KYBER_Q) /
+                                                         static_cast<double>(1ULL << (d + 1)))) +
+                              1;
         for (size_t i = 0; i < kem::KYBER_N; ++i) {
-          int diff = std::abs(static_cast<int>(p.coeffs[i]) -
-                              static_cast<int>(recovered.coeffs[i]));
+          int diff =
+              std::abs(static_cast<int>(p.coeffs[i]) - static_cast<int>(recovered.coeffs[i]));
           if (diff > kem::KYBER_Q / 2) {
             diff = kem::KYBER_Q - diff;
           }

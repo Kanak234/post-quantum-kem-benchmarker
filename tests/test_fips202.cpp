@@ -1,9 +1,10 @@
-#include "kem/fips202.hpp"
 #include <cassert>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
+
+#include "kem/fips202.hpp"
 
 namespace {
 
@@ -15,7 +16,7 @@ std::string to_hex(std::span<const uint8_t> data) {
   return oss.str();
 }
 
-} // namespace
+}  // namespace
 
 int main() {
   std::cout << "[TEST] Running FIPS 202 KAT Verification..." << std::endl;
@@ -24,8 +25,7 @@ int main() {
   {
     std::array<uint8_t, 32> hash;
     kem::sha3_256(std::span<const uint8_t>{}, hash);
-    std::string expected =
-        "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a";
+    std::string expected = "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a";
     assert(to_hex(hash) == expected);
     std::cout << "  - SHA3-256(empty): PASSED" << std::endl;
   }
@@ -35,11 +35,9 @@ int main() {
     std::string input = "abc";
     std::array<uint8_t, 32> hash;
     kem::sha3_256(
-        std::span<const uint8_t>(
-            reinterpret_cast<const uint8_t *>(input.data()), input.size()),
+        std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(input.data()), input.size()),
         hash);
-    std::string expected =
-        "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532";
+    std::string expected = "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532";
     assert(to_hex(hash) == expected);
     std::cout << "  - SHA3-256(\"abc\"): PASSED" << std::endl;
   }
@@ -60,8 +58,7 @@ int main() {
     std::string input = "abc";
     std::array<uint8_t, 64> hash;
     kem::sha3_512(
-        std::span<const uint8_t>(
-            reinterpret_cast<const uint8_t *>(input.data()), input.size()),
+        std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(input.data()), input.size()),
         hash);
     std::string expected =
         "b751850b1a57168a5693cd924b6b096e08f621827444f70d884f5d0240d2712e10e116"
@@ -75,23 +72,19 @@ int main() {
     std::string input = "The quick brown fox jumps over the lazy dog";
     std::array<uint8_t, 64> out1, out2;
     kem::shake128(
-        std::span<const uint8_t>(
-            reinterpret_cast<const uint8_t *>(input.data()), input.size()),
+        std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(input.data()), input.size()),
         out1);
     kem::shake128(
-        std::span<const uint8_t>(
-            reinterpret_cast<const uint8_t *>(input.data()), input.size()),
+        std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(input.data()), input.size()),
         out2);
     assert(out1 == out2);
 
     std::array<uint8_t, 64> out3, out4;
     kem::shake256(
-        std::span<const uint8_t>(
-            reinterpret_cast<const uint8_t *>(input.data()), input.size()),
+        std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(input.data()), input.size()),
         out3);
     kem::shake256(
-        std::span<const uint8_t>(
-            reinterpret_cast<const uint8_t *>(input.data()), input.size()),
+        std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(input.data()), input.size()),
         out4);
     assert(out3 == out4);
     assert(out1 != out3);

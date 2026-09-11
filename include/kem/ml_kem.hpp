@@ -1,8 +1,5 @@
 #pragma once
 
-#include "kem/fips202.hpp"
-#include "kem/indcpa.hpp"
-#include "kem/params.hpp"
 #include <array>
 #include <cstring>
 #include <fstream>
@@ -10,14 +7,17 @@
 #include <span>
 #include <string_view>
 
+#include "kem/fips202.hpp"
+#include "kem/indcpa.hpp"
+#include "kem/params.hpp"
+
 namespace kem {
 
 // CSPRNG random bytes generator
 inline void random_bytes(std::span<uint8_t> out) {
   std::ifstream urandom("/dev/urandom", std::ios::in | std::ios::binary);
   if (urandom.is_open()) {
-    urandom.read(reinterpret_cast<char *>(out.data()),
-                 static_cast<std::streamsize>(out.size()));
+    urandom.read(reinterpret_cast<char*>(out.data()), static_cast<std::streamsize>(out.size()));
     if (urandom.gcount() == static_cast<std::streamsize>(out.size())) {
       return;
     }
@@ -31,7 +31,7 @@ inline void random_bytes(std::span<uint8_t> out) {
 
 template <size_t K, size_t Eta1, size_t Eta2, size_t Du, size_t Dv>
 class MlKem {
-public:
+ public:
   static constexpr size_t Dimension = K;
   static constexpr size_t PublicKeyBytes = 384 * K + 32;
   static constexpr size_t SecretKeyBytes = 384 * K + PublicKeyBytes + 32 + 32;
@@ -39,19 +39,15 @@ public:
   static constexpr size_t SharedSecretBytes = 32;
 
   static constexpr std::string_view name() {
-    if constexpr (K == 2)
-      return "ML-KEM-512";
-    if constexpr (K == 3)
-      return "ML-KEM-768";
-    if constexpr (K == 4)
-      return "ML-KEM-1024";
+    if constexpr (K == 2) return "ML-KEM-512";
+    if constexpr (K == 3) return "ML-KEM-768";
+    if constexpr (K == 4) return "ML-KEM-1024";
     return "ML-KEM-Custom";
   }
 
   // Deterministic KeyGen given seeds d and z (FIPS 203 ML-KEM.KeyGen_internal)
   static void keygen_internal(std::span<uint8_t, PublicKeyBytes> pk,
-                              std::span<uint8_t, SecretKeyBytes> sk,
-                              std::span<const uint8_t, 32> d,
+                              std::span<uint8_t, SecretKeyBytes> sk, std::span<const uint8_t, 32> d,
                               std::span<const uint8_t, 32> z) {
     // 1. K-PKE KeyGen
     indcpa_keypair<K, Eta1>(pk, sk.template subspan<0, 384 * K>(), d);
@@ -68,8 +64,7 @@ public:
   }
 
   // Randomized KeyGen using system CSPRNG
-  static void keygen(std::span<uint8_t, PublicKeyBytes> pk,
-                     std::span<uint8_t, SecretKeyBytes> sk) {
+  static void keygen(std::span<uint8_t, PublicKeyBytes> pk, std::span<uint8_t, SecretKeyBytes> sk) {
     std::array<uint8_t, 32> d;
     std::array<uint8_t, 32> z;
     random_bytes(d);
@@ -120,11 +115,9 @@ public:
                      std::span<const uint8_t, SecretKeyBytes> sk) {
     // 1. Unpack sk components
     std::span<const uint8_t, 384 * K> sk_pke(sk.data(), 384 * K);
-    std::span<const uint8_t, PublicKeyBytes> pk(sk.data() + 384 * K,
-                                                PublicKeyBytes);
+    std::span<const uint8_t, PublicKeyBytes> pk(sk.data() + 384 * K, PublicKeyBytes);
     std::span<const uint8_t, 32> h(sk.data() + 384 * K + PublicKeyBytes, 32);
-    std::span<const uint8_t, 32> z(sk.data() + 384 * K + PublicKeyBytes + 32,
-                                   32);
+    std::span<const uint8_t, 32> z(sk.data() + 384 * K + PublicKeyBytes + 32, 32);
 
     // 2. m' = K-PKE.Decrypt(sk_pke, ct)
     std::array<uint8_t, 32> m_prime;
@@ -158,8 +151,7 @@ public:
     }
 
     // If diff == 0, mask = 0x00; if diff != 0, mask = 0xFF
-    uint8_t mask =
-        static_cast<uint8_t>((static_cast<uint16_t>(diff) - 1) >> 8) ^ 0xFF;
+    uint8_t mask = static_cast<uint8_t>((static_cast<uint16_t>(diff) - 1) >> 8) ^ 0xFF;
 
     for (size_t i = 0; i < SharedSecretBytes; ++i) {
       ss[i] = static_cast<uint8_t>((k_prime[i] & ~mask) | (k_rej[i] & mask));
@@ -171,4 +163,4 @@ using MlKem512 = MlKem<2, 3, 2, 10, 4>;
 using MlKem768 = MlKem<3, 2, 2, 10, 4>;
 using MlKem1024 = MlKem<4, 2, 2, 11, 5>;
 
-} // namespace kem
+}  // namespace kem

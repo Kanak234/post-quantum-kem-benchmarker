@@ -1,13 +1,14 @@
 #include "kem/indcpa.hpp"
+
+#include <cstring>
+
 #include "kem/cbd.hpp"
 #include "kem/fips202.hpp"
-#include <cstring>
 
 namespace kem {
 
 template <size_t K>
-void gen_matrix(std::array<PolyVec<K>, K> &a, std::span<const uint8_t, 32> seed,
-                bool transposed) {
+void gen_matrix(std::array<PolyVec<K>, K>& a, std::span<const uint8_t, 32> seed, bool transposed) {
   for (size_t i = 0; i < K; ++i) {
     for (size_t j = 0; j < K; ++j) {
       uint8_t extseed[34];
@@ -29,12 +30,9 @@ void gen_matrix(std::array<PolyVec<K>, K> &a, std::span<const uint8_t, 32> seed,
       uint8_t buf[SHAKE128_RATE];
       while (count < KYBER_N) {
         keccak_squeezeblocks(state, SHAKE128_RATE, buf);
-        for (size_t pos = 0; pos + 3 <= SHAKE128_RATE && count < KYBER_N;
-             pos += 3) {
-          uint16_t d1 = static_cast<uint16_t>(buf[pos + 0] |
-                                              ((buf[pos + 1] & 0x0F) << 8));
-          uint16_t d2 =
-              static_cast<uint16_t>((buf[pos + 1] >> 4) | (buf[pos + 2] << 4));
+        for (size_t pos = 0; pos + 3 <= SHAKE128_RATE && count < KYBER_N; pos += 3) {
+          uint16_t d1 = static_cast<uint16_t>(buf[pos + 0] | ((buf[pos + 1] & 0x0F) << 8));
+          uint16_t d2 = static_cast<uint16_t>((buf[pos + 1] >> 4) | (buf[pos + 2] << 4));
           if (d1 < KYBER_Q) {
             a[i][j].coeffs[count++] = static_cast<int16_t>(d1);
           }
@@ -50,7 +48,7 @@ void gen_matrix(std::array<PolyVec<K>, K> &a, std::span<const uint8_t, 32> seed,
 namespace {
 
 template <size_t Eta>
-void sample_noise(Poly &p, std::span<const uint8_t, 32> seed, uint8_t nonce) {
+void sample_noise(Poly& p, std::span<const uint8_t, 32> seed, uint8_t nonce) {
   uint8_t extseed[33];
   std::memcpy(extseed, seed.data(), 32);
   extseed[32] = nonce;
@@ -66,7 +64,7 @@ void sample_noise(Poly &p, std::span<const uint8_t, 32> seed, uint8_t nonce) {
   }
 }
 
-} // namespace
+}  // namespace
 
 template <size_t K, size_t Eta1>
 void indcpa_keypair(std::span<uint8_t> pk, std::span<uint8_t> sk,
@@ -106,8 +104,7 @@ void indcpa_keypair(std::span<uint8_t> pk, std::span<uint8_t> sk,
 
 template <size_t K, size_t Eta1, size_t Eta2, size_t Du, size_t Dv>
 void indcpa_enc(std::span<uint8_t> ct, std::span<const uint8_t, 32> msg,
-                std::span<const uint8_t> pk,
-                std::span<const uint8_t, 32> coins) {
+                std::span<const uint8_t> pk, std::span<const uint8_t, 32> coins) {
   PolyVec<K> pk_t;
   polyvec_frombytes(pk_t, pk.subspan(0, 384 * K));
   std::span<const uint8_t, 32> rho(pk.data() + 384 * K, 32);
@@ -185,12 +182,9 @@ void indcpa_dec(std::span<uint8_t, 32> msg, std::span<const uint8_t> ct,
 }
 
 // Explicit template instantiations
-template void gen_matrix<2>(std::array<PolyVec<2>, 2> &,
-                            std::span<const uint8_t, 32>, bool);
-template void gen_matrix<3>(std::array<PolyVec<3>, 3> &,
-                            std::span<const uint8_t, 32>, bool);
-template void gen_matrix<4>(std::array<PolyVec<4>, 4> &,
-                            std::span<const uint8_t, 32>, bool);
+template void gen_matrix<2>(std::array<PolyVec<2>, 2>&, std::span<const uint8_t, 32>, bool);
+template void gen_matrix<3>(std::array<PolyVec<3>, 3>&, std::span<const uint8_t, 32>, bool);
+template void gen_matrix<4>(std::array<PolyVec<4>, 4>&, std::span<const uint8_t, 32>, bool);
 
 template void indcpa_keypair<2, 3>(std::span<uint8_t>, std::span<uint8_t>,
                                    std::span<const uint8_t, 32>);
@@ -199,27 +193,18 @@ template void indcpa_keypair<3, 2>(std::span<uint8_t>, std::span<uint8_t>,
 template void indcpa_keypair<4, 2>(std::span<uint8_t>, std::span<uint8_t>,
                                    std::span<const uint8_t, 32>);
 
-template void indcpa_enc<2, 3, 2, 10, 4>(std::span<uint8_t>,
-                                         std::span<const uint8_t, 32>,
-                                         std::span<const uint8_t>,
-                                         std::span<const uint8_t, 32>);
-template void indcpa_enc<3, 2, 2, 10, 4>(std::span<uint8_t>,
-                                         std::span<const uint8_t, 32>,
-                                         std::span<const uint8_t>,
-                                         std::span<const uint8_t, 32>);
-template void indcpa_enc<4, 2, 2, 11, 5>(std::span<uint8_t>,
-                                         std::span<const uint8_t, 32>,
-                                         std::span<const uint8_t>,
-                                         std::span<const uint8_t, 32>);
+template void indcpa_enc<2, 3, 2, 10, 4>(std::span<uint8_t>, std::span<const uint8_t, 32>,
+                                         std::span<const uint8_t>, std::span<const uint8_t, 32>);
+template void indcpa_enc<3, 2, 2, 10, 4>(std::span<uint8_t>, std::span<const uint8_t, 32>,
+                                         std::span<const uint8_t>, std::span<const uint8_t, 32>);
+template void indcpa_enc<4, 2, 2, 11, 5>(std::span<uint8_t>, std::span<const uint8_t, 32>,
+                                         std::span<const uint8_t>, std::span<const uint8_t, 32>);
 
-template void indcpa_dec<2, 10, 4>(std::span<uint8_t, 32>,
-                                   std::span<const uint8_t>,
+template void indcpa_dec<2, 10, 4>(std::span<uint8_t, 32>, std::span<const uint8_t>,
                                    std::span<const uint8_t>);
-template void indcpa_dec<3, 10, 4>(std::span<uint8_t, 32>,
-                                   std::span<const uint8_t>,
+template void indcpa_dec<3, 10, 4>(std::span<uint8_t, 32>, std::span<const uint8_t>,
                                    std::span<const uint8_t>);
-template void indcpa_dec<4, 11, 5>(std::span<uint8_t, 32>,
-                                   std::span<const uint8_t>,
+template void indcpa_dec<4, 11, 5>(std::span<uint8_t, 32>, std::span<const uint8_t>,
                                    std::span<const uint8_t>);
 
-} // namespace kem
+}  // namespace kem

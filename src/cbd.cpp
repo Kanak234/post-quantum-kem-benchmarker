@@ -2,7 +2,7 @@
 
 namespace kem {
 
-void poly_cbd2(Poly &r, std::span<const uint8_t, 128> buf) {
+void poly_cbd2(Poly& r, std::span<const uint8_t, 128> buf) {
   for (size_t i = 0; i < KYBER_N / 8; ++i) {
     uint32_t t = static_cast<uint32_t>(buf[4 * i + 0]) |
                  (static_cast<uint32_t>(buf[4 * i + 1]) << 8) |
@@ -19,14 +19,13 @@ void poly_cbd2(Poly &r, std::span<const uint8_t, 128> buf) {
   }
 }
 
-void poly_cbd3(Poly &r, std::span<const uint8_t, 192> buf) {
+void poly_cbd3(Poly& r, std::span<const uint8_t, 192> buf) {
   for (size_t i = 0; i < KYBER_N / 4; ++i) {
     uint32_t t = static_cast<uint32_t>(buf[3 * i + 0]) |
                  (static_cast<uint32_t>(buf[3 * i + 1]) << 8) |
                  (static_cast<uint32_t>(buf[3 * i + 2]) << 16);
 
-    uint32_t d =
-        (t & 0x00249249U) + ((t >> 1) & 0x00249249U) + ((t >> 2) & 0x00249249U);
+    uint32_t d = (t & 0x00249249U) + ((t >> 1) & 0x00249249U) + ((t >> 2) & 0x00249249U);
 
     for (size_t j = 0; j < 4; ++j) {
       int16_t a = static_cast<int16_t>((d >> (6 * j + 0)) & 0x7);
@@ -36,4 +35,4 @@ void poly_cbd3(Poly &r, std::span<const uint8_t, 192> buf) {
   }
 }
 
-} // namespace kem
+}  // namespace kem
